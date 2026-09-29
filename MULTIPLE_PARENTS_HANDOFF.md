@@ -39,6 +39,16 @@ runs in cloud sessions. It prepares the following:
 | `BASE_REF` | `origin/main`, fetched shallowly | `make lint-migrations` diffs against it. |
 | Warm Maven | `make install AGENT=1`, with tests skipped | Makes the first build and test much faster. |
 
+**Validated at handoff (2026-09-29, fresh cloud container):**
+
+| Step | Result |
+|:--|:--|
+| First hook run, cold | Finished in about 2 minutes (JDK install, Docker, images, Squawk image, `origin/main`, `make install`). |
+| Second hook run | Finished in about 7 seconds. Every step was skipped as already done. |
+| `make lint-java AGENT=1` | Passed in 19 seconds. |
+| `make lint-migrations SQUAWK_IMAGE=dt-local/squawk:2.63.0 AGENT=1` | Correctly reported 3 issues in a deliberately bad temporary migration. The file was deleted afterwards. |
+| `make test-single MODULE=apiserver TEST=ProjectHierarchyMaintenanceTest AGENT=1` | 5 tests, 0 failures, 0 errors, in 59 seconds, with Testcontainers Postgres through the mirror. |
+
 **Verify at session start:**
 
 ```bash
